@@ -1,0 +1,69 @@
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<stdio.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<string.h>
+
+  main()
+{
+ int sockfd,clilen,i,marks1,marks2,marks3;
+int percentage;
+
+ char division[60];
+ struct sockaddr_in sa,ca;
+
+  sockfd=socket(AF_INET,SOCK_DGRAM,0);
+
+
+
+  sa.sin_family=AF_INET;
+
+  sa.sin_port=htons(6500);
+
+  sa.sin_addr.s_addr=inet_addr("10.2.0.7");
+  
+  bind(sockfd,(struct sockaddr *)&sa,sizeof(sa));
+  
+   
+ 
+
+   for(;;)
+{
+clilen=sizeof(ca);
+	
+   
+
+recvfrom(sockfd,(int *)&marks1,20,0,(struct sockaddr *)&ca,&clilen);
+recvfrom(sockfd,(int *)&marks2,20,0,(struct sockaddr *)&ca,&clilen);
+recvfrom(sockfd,(int *)&marks3,20,0,(struct sockaddr *)&ca,&clilen);
+
+percentage=(marks1+marks2+marks3)/3;
+if(percentage>=80)
+{
+strcpy(division,"DISTINCTION");
+}
+else if(percentage>=70 && percentage<80)
+{
+strcpy(division,"FIRST DIVISION");
+}
+else if(percentage>=60 && percentage<70)
+{
+strcpy(division,"SECOND DIVISION");
+}
+else if(percentage>=40 && percentage<60)
+{
+strcpy(division,"THIRD DIVISION");
+}
+else 
+{
+strcpy(division,"FAILED");
+}
+sendto(sockfd,division,60,0,(struct sockaddr *)&ca,clilen);
+}
+close(sockfd);
+}
+
+
+
